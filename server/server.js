@@ -29,7 +29,7 @@ app.post('/api/test-openai', async (req, res) => {
     const { generatePuzzle } = require('./utils/openai');
     
     const puzzle = await generatePuzzle(
-      "",
+      "", //Content
       {skillLevel: 'beginner'}
     );
     
@@ -41,9 +41,9 @@ app.post('/api/test-openai', async (req, res) => {
 //OpenAI validation test route
 app.post('/api/test-validation', async (req, res) => {
   try {
-    const { validateSubjectiveAnswer } = require('./utils/openai');
+    const { validateAnswer } = require('./utils/openai');
     
-    const validation = await validateSubjectiveAnswer(
+    const validation = await validateAnswer(
       "", //Question
       "", //Answer
       "" //Original content

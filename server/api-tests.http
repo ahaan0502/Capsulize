@@ -57,3 +57,12 @@ Content-Type: application/json
   "email": "testuser@example.com",
   "password": "wrongpassword"
 }
+
+### Test Create Capsule (No Auth Required)
+POST http://localhost:5000/api/test-create-capsule
+Content-Type: application/json
+
+{
+  "content": "I just learned about linked lists and they're confusing!",
+  "skillLevel": "beginner"
+}

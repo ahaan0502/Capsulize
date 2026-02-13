@@ -27,7 +27,7 @@ const generatePuzzle = async (content, userProfile = {}) => {
             model: 'gpt-4o-mini',
             messages: [
                 {role: 'system', content: 'You are a puzzle generator for a time capsule app. Return only valid JSON.'},
-                {role: 'user', content: 'prompt'}
+                {role: 'user', content: prompt}
             ],
             temperature: 0.7,
             response_format: {type: 'json_object'}
@@ -62,7 +62,7 @@ const validateAnswer = async (question, userAnswer, originalContent) => {
             model: 'gpt-4o-mini',
             messages: [
                 {role: 'system', content: 'You are evaluating personal reflection. Return only valid JSON'},
-                {role: "user", content: 'prompt'}
+                {role: "user", content: prompt}
             ],
             temperature: 0.3,
             response_format: {type: 'json_object'}
