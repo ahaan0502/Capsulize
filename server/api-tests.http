@@ -12,3 +12,48 @@ POST http://localhost:5000/api/test-validation
 Content-Type: application/json
 
 {}
+
+### Register New User
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "testuser@example.com",
+  "password": "password123"
+}
+
+### Try to Register with Same Email
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "testuser@example.com",
+  "password": "newpassword"
+}
+
+### Register with Short Password (should fail if validation exists)
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "shortpass@example.com",
+  "password": "123"
+}
+
+### Login with Registered User
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "testuser@example.com",
+  "password": "password123"
+}
+
+### Login with Wrong Password
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "testuser@example.com",
+  "password": "wrongpassword"
+}
