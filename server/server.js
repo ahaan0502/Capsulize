@@ -60,16 +60,24 @@ app.post('/api/test-create-capsule', async (req, res) => {
     const Capsule = require('./models/Capsule');
     const { generatePuzzle } = require('./utils/openai');
     
-    // Hardcoded test data
-    const testContent = ""; //Post content
-    const testUnlockDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 1 week from now
+    // Use data from request body
+    const {content, skillLevel} = req.body;
+    
+    // Validate content exists
+    if (!content) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Content is required' 
+      });
+    }
+    
+    const testUnlockDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
     const testUserId = "000000000000000000000001"; // Fake user ID
     
     // Generate puzzle
     console.log('Generating puzzle...');
-    const puzzleData = await generatePuzzle(testContent, {
-      interests: ['coding', 'algorithms'],
-      skillLevel: 'beginner'
+    const puzzleData = await generatePuzzle(content, {
+      skillLevel: skillLevel || 'beginner'
     });
     
     console.log('Puzzle generated:', puzzleData);
@@ -77,7 +85,7 @@ app.post('/api/test-create-capsule', async (req, res) => {
     // Create capsule
     const capsule = new Capsule({
       userId: testUserId,
-      content: testContent,
+      content: content,  // ← Now uses actual content from request
       puzzle: {
         type: puzzleData.type,
         question: puzzleData.question,

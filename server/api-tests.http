@@ -31,7 +31,7 @@ Content-Type: application/json
   "password": "newpassword"
 }
 
-### Register with Short Password (should fail if validation exists)
+### Register with Short Password
 POST http://localhost:5000/api/auth/register
 Content-Type: application/json
 
@@ -63,6 +63,6 @@ POST http://localhost:5000/api/test-create-capsule
 Content-Type: application/json
 
 {
-  "content": "I just learned about linked lists and they're confusing!",
-  "skillLevel": "beginner"
+  "content": "",
+  "skillLevel": ""
 }

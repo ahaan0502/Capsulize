@@ -22,7 +22,7 @@ router.post('/register', async (req, res) => {
         //Create token
         const token = jwt.sign(
             {userId: user._id, email: user.email},
-            process.env.JWTSECRET,
+            process.env.JWT_SECRET,
             {expiresIn: '7d'}
         );
         
@@ -59,7 +59,7 @@ router.post('/login', async (req, res) => {
         //Create token
         const token = jwt.sign(
             {userId: user._id, email: user.email},
-            process.env.JWTSECRET,
+            process.env.JWT_SECRET,
             {expiresIn: '7d'}
         );
 
@@ -72,6 +72,7 @@ router.post('/login', async (req, res) => {
             }
         });
     } catch (error) {
+        console.error('Login error:', error);
         res.status(500).json({error: 'Server error'});
     }
 });
