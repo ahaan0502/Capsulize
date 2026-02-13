@@ -1,0 +1,14 @@
+### Health check
+GET http://localhost:5000/api/health
+
+### Test OpenAI Puzzle Generation
+POST http://localhost:5000/api/test-openai
+Content-Type: application/json
+
+{}
+
+### Test Answer Validation
+POST http://localhost:5000/api/test-validation
+Content-Type: application/json
+
+{}
