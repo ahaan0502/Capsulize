@@ -1,6 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const validator = require('validator');
 
 const router = express.Router();
 
@@ -8,6 +9,22 @@ const router = express.Router();
 router.post('/register', async (req, res) => {
     try {
         const {email, password} = req.body;
+
+        //Validate email 
+        if(!email || !validator.isEmail(email)) {
+            return res.status(400).json({error: 'Invalid email'});
+        }
+
+        //Validate password        
+        if(!password) {
+            return res.status(400).json({error: 'Password is required'});
+        }
+        if(password.length < 8) {
+            return res.status(400).json({error: 'Password must be at least 8 characters'});
+        }
+        if(password.length > 128) {
+            return res.status(400).json({error: 'Password can\'t exceed 128 characters'});
+        }
 
         //Check for existing user
         const existingUser = await User.findOne({email});
@@ -43,6 +60,16 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
     try {
         const {email, password} = req.body;
+        
+        //Validate required fields
+        if(!email || !password) {
+            return res.status(400).json({error: 'Email and password are required'});
+        }
+
+        //Validate email format
+        if(!validator.isEmail(email)) {
+            return res.status(400).json({error: 'Invalid email format'});
+        }
 
         //Find user
         const user = await User.findOne({email});

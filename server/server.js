@@ -3,6 +3,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose')
 const connectDB = require('./config/database');
+const errorHandler = require('./middleware/errorHandler')
 
 dotenv.config();
 
@@ -11,11 +12,23 @@ const app = express();
 connectDB();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  credentials: true
+}));
 app.use(express.json());
+
+const rateLimit = require('express-rate-limit');
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: 'Too many requests, please try again later'
+});
 
 //Routes
 app.use('/api/auth', require('./routes/auth'));
+app.use('/api/capsules', require('./routes/capsule'));
+app.use('/api/', limiter);
 //Health check route
 app.get('/api/health', (req, res) => {
   res.json({ 
@@ -30,7 +43,7 @@ app.post('/api/test-openai', async (req, res) => {
     
     const puzzle = await generatePuzzle(
       "", //Content
-      {skillLevel: 'beginner'}
+      {skillLevel: 'expert'}
     );
     
     res.json({ success: true, puzzle });
@@ -122,6 +135,8 @@ app.post('/api/test-create-capsule', async (req, res) => {
   }
 });
 
+//Error Handler
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 

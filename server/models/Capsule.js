@@ -9,7 +9,8 @@ const capsuleSchema = new mongoose.Schema({
     content: {
         type: String,
         required: true,
-        trim: true
+        trim: true,
+        maxLength: 3000
     },
     puzzle: {
         type: {

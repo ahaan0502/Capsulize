@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const validator = require('validator');
 
 const userSchema = new mongoose.Schema({
     email: {
@@ -7,19 +8,25 @@ const userSchema = new mongoose.Schema({
         required: true,
         unique: true,
         lowercase: true,
-        trim: true
+        trim: true,
     },
     password: {
         type: String,
         required: true,
-        minlength: 8
     },
     createdAt: {
         type: Date,
         default: Date.now
     },
     profile: {
-        skillLevel: String
+        skillLevel: {
+            type: String,
+            default: "Beginner"
+        },
+        postsCompleted: {
+            type: Number,
+            default: 0
+        }
     }
 });
 

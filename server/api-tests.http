@@ -64,5 +64,5 @@ Content-Type: application/json
 
 {
   "content": "",
-  "skillLevel": ""
+  "skillLevel": "beginner"
 }
