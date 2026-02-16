@@ -5,15 +5,40 @@ const authenticate = require('../middleware/auth');
 const {generatePuzzle} = require('../utils/openai');
 
 //Create a new capsule post
-router.post('/', async (req, res) => {
+router.post('/', authenticate, async (req, res) => {
     try {
-        const {content, unlockDate} = req.body;
+        const { content, unlockDate } = req.body;
+        const User = require('../models/user');
 
-        const user = req.user;
+        // Validate content
+        if (!content) {
+            return res.status(400).json({ error: 'Content is required' });
+        }
+
+        if (content.trim().length < 20) {
+            return res.status(400).json({ error: 'Content must be at least 20 characters' });
+        }
+
+        // Validate unlock date
+        if (!unlockDate) {
+            return res.status(400).json({ error: 'Unlock date is required' });
+        }
+
+        const unlockDateObj = new Date(unlockDate);
+        if (unlockDateObj <= new Date()) {
+            return res.status(400).json({ error: 'Unlock date must be in the future' });
+        }
+
+        // Fetch the full user from database to get profile
+        const user = await User.findById(req.user.userId);
+        const skillLevel = user?.profile?.skillLevel || 'intermediate';
+
+        // Generate puzzle
         const puzzleData = await generatePuzzle(content, {
-            skillLevel: user.profile.skillLevel
+            skillLevel: skillLevel
         });
 
+        // Create capsule
         const capsule = new Capsule({
             userId: req.user.userId,
             content: content,
@@ -21,10 +46,12 @@ router.post('/', async (req, res) => {
                 type: puzzleData.type,
                 question: puzzleData.question,
                 difficulty: puzzleData.difficulty,
-                hints: puzzleData.hints
+                hints: puzzleData.hints || [],
+                expectedAnswer: puzzleData.expectedAnswer || null
             },
-            unlockDate: new Date(unlockDate),
+            unlockDate: unlockDateObj,
         });
+        
         await capsule.save();
         
         res.status(201).json({
@@ -41,7 +68,7 @@ router.post('/', async (req, res) => {
         });
     } catch (error) {
         console.error('Error creating capsule:', error);
-        res.status(500).json({error: error.message})
+        res.status(500).json({ error: error.message });
     }
 });
 
@@ -170,7 +197,7 @@ router.post('/:id/unlock', authenticate, async (req, res) => {
             capsule.unlockedAt = new Date();
             await capsule.save();
 
-            const difficulty = capsule.difficulty;
+            const difficulty = capsule.puzzle.difficulty;
             
             const user = await User.findById(req.user.userId);
             
@@ -203,7 +230,7 @@ router.post('/:id/unlock', authenticate, async (req, res) => {
             const hintIndex = Math.min(capsule.unlockAttempts - 1, capsule.puzzle.hints.length - 1);
             const hint = capsule.puzzle.hints[hintIndex];
 
-            return res(400).json({
+            return res.status(400).json({
                 success: false,
                 error: 'Incorrect answer',
                 feedback: feedback,

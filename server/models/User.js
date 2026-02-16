@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema({
     profile: {
         skillLevel: {
             type: String,
-            default: "Beginner"
+            default: "beginner"
         },
         postsCompleted: {
             type: Number,
