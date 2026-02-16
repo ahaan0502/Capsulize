@@ -1,5 +1,5 @@
 const OpenAI = require('openai');
-const user = require('../models/user');
+const user = require('../models/User');
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
